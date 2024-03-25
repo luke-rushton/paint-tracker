@@ -17,6 +17,18 @@
           "appId": "d2a8tap6gqa0oy",
           "type": "manual"
         }
+      },
+      "function": {
+        "cataloglambda": {
+          "deploymentBucketName": "amplify-catalogue-dev-174909-deployment",
+          "s3Key": "amplify-builds/cataloglambda-6a794348722b56704d6e-build.zip"
+        }
+      },
+      "storage": {
+        "paints": {}
+      },
+      "api": {
+        "catalog": {}
       }
     }
   }

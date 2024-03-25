@@ -1,28 +1,53 @@
-<script setup>
-defineProps({
-
-})
-var PaintQuantity = 15;
-
-
-</script>
-
 <template>
   <div class="product-block">
     <div class="square">
       <h3>Blue</h3>
     </div>
     <div>
-      <p>Quantity: {{ PaintQuantity }}</p>
+      <p v-if="data">Quantity: {{ data.Amount }}</p>
       <p>Add to Stock</p>
-      <input type="number"/>
-      <button>add</button>
+      <input type="number" v-model="addAmount"/>
+      <button @click="updateData(addAmount)">add</button>
       <p>Remove from stock</p>
-      <input type="number"/>
-      <button>remove</button>
+      <input type="number" v-model="removeAmount"/>
+      <button @click="updateData(-removeAmount)">remove</button>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+    data() {
+      return {
+        data: null,
+      };
+    },
+    methods: {
+      async fetchData() {      
+        const response = await fetch("https://tklsyjqrt9.execute-api.us-west-1.amazonaws.com/items/blue"); 
+        this.data = await response.json();
+      },
+      async updateData(updateAmount) {
+        this.fetchData(); //ensure we have current stock quantity
+        if ((this.data.Amount + updateAmount) < 0){ //check to see if operation will result in negative stock
+          alert("Error: Can\'t have less than 0 paint in stock. ")
+        } else { //update to new stock quantity
+          const sendData = await fetch("https://tklsyjqrt9.execute-api.us-west-1.amazonaws.com/items", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: "{\"PaintColor\":\"blue\",\"Amount\":" + (this.data.Amount + updateAmount) + "}"
+          });
+        }
+        this.fetchData(); //refresh stock quantity display
+      }   
+    },
+    created() {
+      this.fetchData(); //loads stock quantity
+    }
+  };
+</script>
 
 <style scoped>
 .product-block{
